@@ -15,6 +15,8 @@ public class PlayerMove : MonoBehaviour
     public float jumpForce;
     public float Gravity = -20;
     public Animator animator;
+   
+   
 
     void Start()
     {
@@ -22,10 +24,14 @@ public class PlayerMove : MonoBehaviour
     }
     void Update()
     {
+
+        
         controller.Move(direction * Time.fixedDeltaTime);
         direction.z = forwardSpeed;
 
-        
+
+
+
         if (controller.isGrounded)
         {
             direction.y = -1;
@@ -67,8 +73,21 @@ public class PlayerMove : MonoBehaviour
             targetPosition += Vector3.right * laneDistance;
         }
 
-        transform.position = Vector3.Lerp(transform.position,targetPosition,80*Time.deltaTime);
+        if(transform.position == targetPosition)
+        {
+            return;
+        }
 
+        Vector3 diff = targetPosition - transform.position;
+        Vector3 moveDir = diff.normalized * 25 * Time.deltaTime;
+        if(moveDir.sqrMagnitude < diff.sqrMagnitude)
+        {
+            controller.Move(moveDir);
+        }
+        else
+        {
+            controller.Move(diff);
+        }
     }
 
  /*   private void FixedUpdate()
@@ -82,4 +101,17 @@ public class PlayerMove : MonoBehaviour
         direction.y = jumpForce;
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        Debug.Log(other.gameObject.tag);
+        if (other.gameObject.tag == "Objects")
+        {
+            Debug.Log(other.gameObject.tag);
+            forwardSpeed = 0;
+            PLayerManager.gameOver = true;
+
+        }
+    }
+
 }
+
