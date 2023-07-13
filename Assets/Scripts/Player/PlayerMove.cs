@@ -15,6 +15,7 @@ public class PlayerMove : MonoBehaviour
     public float jumpForce;
     public float Gravity = -20;
     public Animator animator;
+    
    
    
 
@@ -35,7 +36,7 @@ public class PlayerMove : MonoBehaviour
         if (controller.isGrounded)
         {
             direction.y = -1;
-            if (Input.GetKeyDown(KeyCode.UpArrow))
+            if (SwipeManager.swipeUp)
             {
                 Jump();
             }
@@ -46,19 +47,25 @@ public class PlayerMove : MonoBehaviour
         }
 
 
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (SwipeManager.swipeLeft)
         {
             desiredLane--;
             if (desiredLane == -1)
+            {
                 desiredLane = 0;
+            }
+                
 
         }
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (SwipeManager.swipeRight)
         {
             desiredLane++;
             if (desiredLane == 3)
+            {
                 desiredLane = 2;
+            }
+                
         }
 
         Vector3 targetPosition = transform.position.z * transform.forward + transform.position.y * transform.up;
@@ -101,15 +108,24 @@ public class PlayerMove : MonoBehaviour
         direction.y = jumpForce;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        Debug.Log(other.gameObject.tag);
-        if (other.gameObject.tag == "Objects")
+    /*    private void OnTriggerEnter(Collider other)
         {
             Debug.Log(other.gameObject.tag);
-            forwardSpeed = 0;
-            PLayerManager.gameOver = true;
+            if (other.gameObject.tag == "Objects")
+            {
+                Debug.Log(other.gameObject.tag);
+                forwardSpeed = 0;
+                PLayerManager.gameOver = true;
 
+            }
+        }*/
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(hit.transform.tag == "Objects")
+        {
+            PLayerManager.gameOver = true;
+            
         }
     }
 
